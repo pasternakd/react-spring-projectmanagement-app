@@ -49,7 +49,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new Authorities("ROLE_ENGINEER"));
+        roles.add(Authorities.of("ROLE_ENGINEER"));
         return roles;
     }
 }
