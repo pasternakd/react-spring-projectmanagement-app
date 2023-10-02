@@ -1,8 +1,10 @@
 package com.projectmanagement.projectmanagement.config;
 
-
 import com.projectmanagement.projectmanagement.filter.JwtFilter;
 import com.projectmanagement.projectmanagement.util.CustomPasswordEncoder;
+import javax.servlet.http.HttpServletResponse;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,8 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -28,19 +28,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
 
-
-    @Override @Bean
+    @Override
+    @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-            .passwordEncoder(passwordEncoder.getPasswordEncoder());
-
-
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder.getPasswordEncoder());
     }
 
     @Override
@@ -54,13 +50,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http = http.exceptionHandling()
                 .authenticationEntryPoint((request, response, ex) -> {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
-                }).and();
+                })
+                .and();
 
-       http.authorizeRequests()
-                .antMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated();
+        http.authorizeRequests()
+                .antMatchers("/api/auth/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated();
 
-
-       http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

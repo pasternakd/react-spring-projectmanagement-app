@@ -3,22 +3,19 @@ package com.projectmanagement.projectmanagement.service;
 import com.projectmanagement.projectmanagement.domain.User;
 import com.projectmanagement.projectmanagement.repository.UserRepository;
 import com.projectmanagement.projectmanagement.util.CustomPasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private CustomPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository userRepo;
+    private final CustomPasswordEncoder passwordEncoder;
+    private final UserRepository userRepo;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
