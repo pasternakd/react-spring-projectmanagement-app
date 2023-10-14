@@ -1,5 +1,6 @@
 package com.projectmanagement.projectmanagement.web;
 
+import com.projectmanagement.projectmanagement.domain.User;
 import com.projectmanagement.projectmanagement.dto.AuthCredentialRequest;
 import com.projectmanagement.projectmanagement.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import com.projectmanagement.projectmanagement.domain.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,26 +22,20 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping("login")
-    public ResponseEntity<?> login (@RequestBody AuthCredentialRequest request){
+    public ResponseEntity<?> login(@RequestBody AuthCredentialRequest request) {
         try {
-            Authentication authenticate = authenticationManager
-                    .authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    request.getUsername(), request.getPassword()
-                            )
-                    );
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
             User user = (User) authenticate.getPrincipal();
             user.setPassword(null);
             return ResponseEntity.ok()
-                    .header(
-                            HttpHeaders.AUTHORIZATION,
-                            jwtUtil.generateToken(user)
-                    )
+                    .header(HttpHeaders.AUTHORIZATION, jwtUtil.generateToken(user))
                     .body(user);
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
